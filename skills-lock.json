@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "khazix-writer": {
+      "source": "KKKKhazix/khazix-skills",
+      "sourceType": "github",
+      "skillPath": "khazix-writer/SKILL.md",
+      "computedHash": "a05dba5f3ccdeb8d1c9c3ab9d820547ec0ab1365d54d682e29d5724bbafecb6c"
+    }
+  }
+}
