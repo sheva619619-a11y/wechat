@@ -9,9 +9,10 @@
 | 项 | 说明 |
 |----|------|
 | Cursor Automations | 在 **Agents Window** 中创建/保存；云端 Agent 需可访问仓库 |
-| Git 仓库 | 当前 `公众号` 目录**还不是 git 仓库**。云端定时任务通常要 check out 远程仓库——请先把本目录纳入已有仓库并 push，或单独建仓 |
-| Firecrawl | 日更采集依赖 Firecrawl。若 Automations 里用不了本机 `user-firecrawl-mcp`，请在 [cursor.com](https://cursor.com) 把 Firecrawl 配成 **Dashboard MCP**，或在指令里允许用网页搜索作降级 |
-| 微信密钥 | `tools/wechat-draft/.env` 仅存本机；**不要**把 AppSecret 写进 Automation 指令正文。云端推草稿需改用 Cursor Secrets / 本机计划任务调脚本 |
+| Git 仓库 | 远程仓：`https://github.com/sheva619619-a11y/wechat`（`main`） |
+| **日更 Skill 必须进仓** | 云端 Agent **读不到**本机 `~/.cursor/skills/`。规范文件已放在仓库 `.cursor/skills/yujia-wechat-daily/`（含 SKILL.md、brand-facts、style-guide 等）。改口径时改仓内副本并 push |
+| Firecrawl | 须在 [cursor.com](https://cursor.com) 配成 **Dashboard MCP** 并完成认证；仅本机 `user-firecrawl-mcp` 时云端会报「未认证」并降级网页搜索 |
+| 微信密钥 | `tools/wechat-draft/.env` 仅存本机；**不要**把 AppSecret 写进 Automation 指令正文 |
 
 ## 推荐架构（两段）
 
