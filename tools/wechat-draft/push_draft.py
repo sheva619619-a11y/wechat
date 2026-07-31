@@ -118,6 +118,16 @@ def extract_body_section(html: str) -> str:
     return content
 
 
+def strip_content_h1(content: str) -> str:
+    """去掉正文内主标题。微信草稿箱会用 articles.title 单独展示标题，保留 h1 会重复。"""
+    return re.sub(
+        r"<h1\b[^>]*>.*?</h1>\s*",
+        "",
+        content,
+        count=1,
+        flags=re.I | re.S,
+    )
+
 def rewrite_local_images(
     content: str, day_dir: Path, token: str, dry_run: bool
 ) -> str:
@@ -259,6 +269,7 @@ def main() -> int:
         print("[ok] access_token 已获取")
 
     content = extract_body_section(html)
+    content = strip_content_h1(content)
     content = rewrite_local_images(content, day_dir, token, args.dry_run)
     thumb = upload_thumb(token, cover, args.dry_run)
     media_id = draft_add(

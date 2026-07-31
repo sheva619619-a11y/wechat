@@ -2,60 +2,58 @@
 
 ## 目标
 
-工作日 **09:30（北京时间）** 自动跑日更：采集 → 选题（默认按推荐直接成稿）→ 正文/HTML/配图 →（可选）推送微信草稿箱 → 人工复核发布。
+工作日自动跑日更：采集 → 选题成稿 → **直接提交并推送到 `main`** → 本机 `git pull` 审核 → 推送微信草稿箱 → 人工发布。
 
 ## 前置条件（重要）
 
 | 项 | 说明 |
 |----|------|
 | Cursor Automations | 在 **Agents Window** 中创建/保存；云端 Agent 需可访问仓库 |
-| Git 仓库 | 远程仓：`https://github.com/sheva619619-a11y/wechat`（`main`） |
-| **日更 Skill 必须进仓** | 云端 Agent **读不到**本机 `~/.cursor/skills/`。规范文件已放在仓库 `.cursor/skills/yujia-wechat-daily/`（含 SKILL.md、brand-facts、style-guide 等）。改口径时改仓内副本并 push |
-| Firecrawl | 须在 [cursor.com](https://cursor.com) 配成 **Dashboard MCP** 并完成认证；仅本机 `user-firecrawl-mcp` 时云端会报「未认证」并降级网页搜索 |
-| 微信密钥 | `tools/wechat-draft/.env` 仅存本机；**不要**把 AppSecret 写进 Automation 指令正文 |
+| Git 仓库 | `https://github.com/sheva619619-a11y/wechat`（**只写 `main`**） |
+| **日更 Skill 必须进仓** | `.cursor/skills/yujia-wechat-daily/`（改口径后须 push） |
+| Firecrawl | Dashboard MCP 已认证 |
+| 微信密钥 | 仅本机 `tools/wechat-draft/.env`；云端**不读** Secret |
 
-## 推荐架构（两段）
+## 现行工作流（已选定：直推 main）
 
-### A. 云端：每天产稿（Cursor Automation）
+### 你必须在 Automation 设置里改的两项
 
-- 触发：工作日 9:30（cron `30 9 * * 1-5`，时区在编辑器按北京时间确认）
-- 指令：严格遵循 `yujia-wechat-daily` skill；默认按推荐选题成稿，不在聊天里等待确认
-- 产出：写入仓库 `published/{当天日期}/`
-- **本阶段不调用微信接口**（避免密钥进云）
+打开 **Automations → 羽嘉日更 → Settings / Tools**：
 
-#### 产出到底在哪？（必读）
+1. **关闭「Open Pull Request」**（不要再开 PR）  
+2. **允许对仓库 `main` 进行 commit / push**（或等价「Write to repo / Commit」权限）
 
-| 你在哪找 | 看得到吗 | 说明 |
-|----------|----------|------|
-| 本机 `published/` | 默认 **看不到** | 云端写在独立分支，不会自动同步到你的电脑 |
-| GitHub `main` | 默认 **看不到** | 若 Tools 勾了 **Open Pull Request**，稿在 **PR 分支**，未 Merge 前不进 main |
-| 日志里的 **PR #N** | **在这里** | 打开 PR → Files changed 即今日稿；或 Merge 后再 `git pull` |
+不关 PR 的话，稿会继续进分支，本地和 `main` 仍然找不到。
 
-推荐工作流二选一（在 Automation → Tools 里改）：
+### A. 云端：每天产稿并推上 main
 
-1. **保留 Open Pull Request（稳妥）**  
-   每天：打开 PR → 人工扫一眼 → **Merge** → 本机 `git pull` → 再推微信草稿。  
-   摘要里务必写清 PR 链接（现有指令已要求交付摘要）。
+- 触发：工作日（时区 Asia/Shanghai；建议 9:30，与其它 Automation 错开避免限流）
+- 产出：`published/{当天日期}/`（选题简报、正文、公众号.html、配图）
+- 成稿后：**commit + push 到 `main`**，提交说明含日期与标题
+- **不调用微信接口**
 
-2. **改为直接提交 `main`（省事，适合已信任自动稿）**  
-   去掉 / 关闭「Open Pull Request」，允许 Agent **commit + push 到 main**。  
-   这样 GitHub `main` 与 `git pull` 后本地都能直接看到 `published/{日期}/`。  
-   风险：差稿也会进主分支，靠日后覆盖或回滚。
+#### 每天去哪看
 
-**不要指望**只改 Agent 提示词就能让文件出现在本机——落盘位置由 Git 动作（PR vs push main）决定。
+| 步骤 | 位置 |
+|------|------|
+| 1 | Automation **Run 摘要**（是否成功、栏目/标题） |
+| 2 | GitHub 仓库 `main` → `published/{日期}/` |
+| 3 | 本机 `git pull` 后打开同一目录；浏览器打开 `公众号.html` |
+| 4 | 满意后本机推草稿箱 → 公众平台发布 |
 
-### B. 本机：推草稿箱（Windows 计划任务或收工脚本）
-
-先确认当日目录已在本地（Merge PR 后 `git pull`，或从 PR 分支检出），再执行：
+### B. 本机：推草稿箱
 
 ```powershell
 cd "f:\1.3\低空安全防护项目\公众号"
+git pull
 python tools\wechat-draft\push_draft.py --date (Get-Date -Format yyyy-MM-dd)
 ```
 
-或每天 10:00 计划任务跑上述命令（给人工留半小时审本地稿再推，也可 9:45 紧接推送）。
+`push_draft.py` 会自动去掉正文里的 `<h1>`，避免与微信标题重复。
 
-## Automation 指令草案（粘贴用）
+建议 9:45–10:00 跑（或审完再推）。**禁止自动群发。**
+
+## Automation 指令草案（整段替换粘贴）
 
 ```text
 你是羽嘉低空科技订阅号日更 Agent。必须读取并严格遵循仓库内：
@@ -65,19 +63,20 @@ python tools\wechat-draft\push_draft.py --date (Get-Date -Format yyyy-MM-dd)
 
 硬规则：
 1. 政企方案体；非案例洞察植入 ≤1 处；禁写清单逐条遵守。
-2. 先读 published/ 近 10 日选题简报「今日定稿」（以目录成稿为准，不信上轮自述）。建「近 7 日对照表」，给每条候选打母题标签。
-3. 淘汰：主母题与近 7 日已发相同；或该栏目 7 日配额已满。例：近 7 日已有「机场净空」则禁再写净空管理办法/扰航演练。
-4. 对存活候选按 SKILL 评分表打分，推荐分最高者；禁止仅因数字亮（55公里/100座等）压过避重与配额。选题简报写明分数、淘汰原因。
-5. 默认最高分成稿；若近7日案例洞察为0且案例候选与最高分差≤10，改用案例（简报注明轮换加权）。最高分<50则降级素材池并标明。
-6. 避重以 main 上 published/ 为准；未合并 PR 中的近稿须先合并/检出再评分，禁止写「无成稿目录」糊弄。
-7. 交付到 published/{YYYY-MM-DD}/：选题简报.md、正文.md、公众号.html、配图/（含 00-封面.png）。成稿后 commit；若开启 Open PR 则摘要必须带 PR 链接。
-8. 禁止调用微信群发/发布接口；本任务不读取 WECHAT_APP_SECRET。
-9. 成稿后写「今日交付摘要」（栏目、母题、标题、路径、评分、PR链接若有）。
-10. 优先 Firecrawl；未认证则降级网页搜索并标注。
+2. 先读 published/ 近 10 日选题简报「今日定稿」（以 main 目录成稿为准）。建「近 7 日对照表」，给每条候选打母题标签。
+3. 淘汰：主母题与近 7 日已发相同；或该栏目 7 日配额已满。
+4. 按 SKILL 评分表打分；禁止仅因数字亮压过避重与配额。简报写明分数与淘汰原因。
+5. 默认最高分成稿；若近7日案例洞察为0且案例候选与最高分差≤10，改用案例（注明轮换加权）。最高分<50则降级素材池并标明。
+6. 交付到 published/{YYYY-MM-DD}/：选题简报.md、正文.md、公众号.html、配图/（含 00-封面.png）。
+7. 公众号.html：栏目标签后直接导读，正文内禁止写与稿件同文的 <h1> 主标题（微信用接口 title 展示）。
+8. 成稿后必须 git commit 并 push 到仓库 main 分支（不要开 Pull Request、不要只留在云端工作区）。提交说明示例：日更 YYYY-MM-DD：栏目·标题。
+9. 禁止调用微信群发/发布接口；本任务不读取 WECHAT_APP_SECRET。
+10. 成稿后写「今日交付摘要」：栏目、母题、标题、路径 published/{日期}/、评分、已推送 main（commit 短哈希若有）。
+11. 优先 Firecrawl；未认证则降级网页搜索并标注。
 
 今日日期以运行环境当前日期为准（Asia/Shanghai）。
 ```
 
 ## 微信订阅号能力确认
 
-官方文档：订阅号（公众号）可调用 `draft/add` 写入草稿箱。推送成功 ≠ 已发布。
+订阅号可调用 `draft/add` 写入草稿箱。推送成功 ≠ 已发布。

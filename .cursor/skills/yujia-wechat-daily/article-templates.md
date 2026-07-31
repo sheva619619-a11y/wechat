@@ -80,7 +80,7 @@
     <span style="display:inline-block;padding:4px 16px;border:1px solid #2ea6e6;border-radius:999px;color:#2ea6e6;font-size:13px;letter-spacing:2px;">{栏目名}</span>
   </section>
 
-  <h1 style="margin:0 0 18px;font-size:21px;line-height:1.45;color:#1a1a1a;font-weight:700;text-align:center;">{标题}</h1>
+  <!-- 不要写 h1 主标题：微信草稿箱用接口 title 展示标题，正文再写会重复。标题只放 <title> 与正文.md「标题备选」。 -->
 
   <!-- 导读 -->
   <section style="background:#f7f8fa;padding:12px 16px;margin:0 0 20px;border-radius:6px;">
@@ -139,5 +139,6 @@
 使用说明：
 
 - 分节用「一、二、三…」，不用 01/02（与政企方案体一致）。
+- **禁止**在正文 HTML 写与稿件同文的 `<h1>` 主标题（栏目标签后直接导读）；`push_draft.py` 推送时也会剥掉遗留 h1。
 - 需要配图处插入 `<!-- [图片占位：说明] -->`；图片须在公众号后台上传。
 - 摘要（公众号「摘要」栏）单独给出，≤120 字。
