@@ -10,7 +10,7 @@ description: >-
 目标：以**可传播的行业深度内容**获量，触达公安/政府/行业读者；靠**软植入**完成天罗工程与猎场一号曝光。  
 默认文风双轨：**B 调查叙事（主粮）** / **A 方案建设（每周约 1）**，见 [style-guide.md](style-guide.md)。周配比约 **4B : 1A**。
 
-品牌口径与禁写清单见 [brand-facts.md](brand-facts.md)；信源见 [sources.md](sources.md)；结构排版见 [article-templates.md](article-templates.md)；例文标尺见 [reference-samples.md](reference-samples.md)。账号包装见工作区 `账号基础包装方案.md`。
+品牌口径与禁写清单见 [brand-facts.md](brand-facts.md)；信源见 [sources.md](sources.md)；结构排版见 [article-templates.md](article-templates.md)；例文标尺见 [reference-samples.md](reference-samples.md)（含 **低空翼术家** 技术科普任务链写法）。账号包装见工作区 `账号基础包装方案.md`。
 
 ## 硬约束（违反即返工）
 
@@ -20,7 +20,8 @@ description: >-
 4. **产出到 `published/{日期}/`**；可用 `push_draft.py` 推草稿箱；**禁止自动群发**。
 5. **文风双轨**：默认 B；按 4B:1A 安排 A。禁止卡兹克口语风（除非用户点名）。禁止再交 1200–2000 字「三节摘要稿」。
 6. **篇幅硬门槛**：B 正文 3500–4500 字（&lt;3200 不合格）；A 正文 4000–5500 字（&lt;3800 不合格）。
-7. 成稿后 humanizer-zh 去套话（B 保留叙事；A 保留节末金句），再过交卷清单。
+7. 成稿后做**句子层滤镜**：按 style-guide「叠活人感」去洞察路标/翻案句/同义注水（可用 `human-writing` 作滤镜参考，**不替换** B/A 骨架与数字卡排版）；再过 humanizer-zh 去套话（B 保留叙事；A 保留节末金句），最后交卷清单。
+8. **配图默认 V2**：封面底图、栏目配套、方法论、A 轨长图一律从 `素材库/` 现行路径取用（已是展陈工程风）。**禁止**从 `archive-赛博风/` 或 `06-A轨架构长图/v1-赛博指挥风/` 取图，除非用户当场点名要赛博风。
 
 ## 栏目体系（选题切口）
 
@@ -40,12 +41,12 @@ Task Progress:
 - [ ] 2. 选题：定 B/A、打分、避重；简报标注轨与目标字数
 - [ ] 3. 成稿：按 style-guide 对应轨写满篇幅（B≥3500 或 A≥4000）
 - [ ] 4. 植入：≤1；B 宜克制
-- [ ] 5. 润色：humanizer-zh；标题 3 备选
+- [ ] 5. 润色：句子层叠活人感滤镜（见 style-guide）→ humanizer-zh；标题 3 备选
 - [ ] 6. 排版：article-templates 对应轨 HTML（B 含数字卡；无 h1）
 - [ ] 7. 自查：字数门槛 + 交卷清单 → commit push main
 ```
 
-自动化默认直接成稿，无需等待确认。
+自动化默认直接成稿，无需等待确认。**文风默认**：B/A 骨架不变，正文句子层叠活人感滤镜（不去掉数字卡与建设对表）。
 
 ### 选题标准（人工与自动化共用）
 
@@ -134,4 +135,5 @@ published/{YYYY-MM-DD}/
 - [ ] 无 AI 套话堆砌；无正文 `<h1>`
 - [ ] 标题无标题党；摘要 ≤120 字
 - [ ] HTML 内联样式；文末关于我们 + 免责；B 含信源列表
+- [ ] A 轨：优先 `素材库/06-A轨架构长图/` 根目录 V2 长图 3–5 张；其它插图用 V2 栏目/方法论素材
 - [ ] 已 push 到 main（自动化）
